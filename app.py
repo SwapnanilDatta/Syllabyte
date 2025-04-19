@@ -25,6 +25,12 @@ def home():
         return redirect("/login")
     return render_template("home.html")
 
+@app.route("/try")
+def try_page():
+    if "user_id" not in session:
+        return redirect("/login")
+    return render_template("try.html")
+
 @app.route("/index", methods=["GET", "POST"])
 def index():
     if "user_id" not in session:

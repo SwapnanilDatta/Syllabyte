@@ -173,7 +173,7 @@
 </head>
 <body>
     <div class="container">
-        <a href="/" class="back-btn">← Back to Study Aid</a>
+        <a href="/" class="back-btn">← Back to Home</a>
         <h1>Syllabyte : General Overview</h1>
         <form method="POST">
             <input type="text" name="topic" placeholder="Enter a topic like 'Machine Learning'" required>
@@ -190,6 +190,7 @@
                 <button type="submit">Generate Notes from Document</button>
             </form>
         </div> -->
+        {% if topic %}
 
         <div class="header">
             <h1>📚 Study Summary</h1>
@@ -209,6 +210,7 @@
             </form>
         </div>
     </div>
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

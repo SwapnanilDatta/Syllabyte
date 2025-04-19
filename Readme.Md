@@ -60,29 +60,6 @@ Syllabyte is an AI-powered study aid generator that transforms syllabus content 
 - Groq LLM API
 - SQLite database
 
----
-
-## 🗂 Project Structure
-
-```
-Syllabyte/
-├── app.py               # Main Flask application
-├── auth.py              # Authentication routes
-├── models.py            # Database models
-├── chains/              # LLM chain implementations
-│   ├── notes_chain.py
-│   ├── formula_chain.py
-│   ├── flash_card_mindmap.py
-│   └── general_summary.py
-├── templates/           # HTML templates
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── try.html
-│   ├── upload.html
-│   └── mcq.html
-└── static/              # Static assets
-```
 
 ---
 

@@ -35,22 +35,43 @@ def index():
         topic = request.form["topic"]
         notes = generate_notes(topic)
         formulas = generate_formulas(topic)
-        # mindmap = generate_mindmap(topic)
-        #print(mindmap)
+        mcqs = generate_mcqs(topic)
+        mindmap, flashcards = generate_study_material(topic)
 
-
+        # Store in database
         entry = SearchHistory(
             user_id=session["user_id"],
             topic=topic,
             notes=notes,
             formulas=formulas,
-            mindmap=mindmap
+            mindmap=json.dumps(mindmap),
+            mcq=json.dumps(mcqs)
         )
         db.session.add(entry)
         db.session.commit()
 
     history = SearchHistory.query.filter_by(user_id=session["user_id"]).order_by(SearchHistory.timestamp.desc()).all()
-    return render_template("index.html", notes=notes, formulas=formulas, mindmap=mindmap, history=history)
+    return render_template("index.html", notes=notes, formulas=formulas, history=history)
+
+@app.route("/get_history_content/<int:history_id>")
+def get_history_content(history_id):
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    try:
+        entry = SearchHistory.query.get_or_404(history_id)
+        if entry.user_id != session["user_id"]:
+            return jsonify({"error": "Unauthorized"}), 401
+        
+        return jsonify({
+            "id": entry.id,
+            "topic": entry.topic,
+            "notes": entry.notes,
+            "formulas": entry.formulas,
+            "timestamp": entry.timestamp.strftime('%Y-%m-%d %H:%M')
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/generate_study_material", methods=["POST"])
 def generate_study_material_route():

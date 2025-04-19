@@ -15,4 +15,16 @@ class SearchHistory(db.Model):
     notes = db.Column(db.Text)
     formulas = db.Column(db.Text)
     mindmap = db.Column(db.Text)
+    mcq = db.Column(db.Text)  # Add this for MCQ responses
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'notes': self.notes,
+            'formulas': self.formulas,
+            'mindmap': self.mindmap,
+            'mcq': self.mcq,
+            'timestamp': self.timestamp.strftime('%Y-%m-%d %H:%M')
+        }

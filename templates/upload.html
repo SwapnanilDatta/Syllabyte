@@ -1,196 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Document Upload</title>
-    <!-- GoJS -->
-    <script src="https://unpkg.com/gojs/release/go.js"></script>
-    <!-- MathJax -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Syllabyte</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=VT323&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0f0f17;
+            --primary: #a36bff;
+            --primary-light: #b388ff;
+            --text-color: #f0f0f0;
+            --secondary: #6b44c0;
+            --accent: #ff44e3;
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
         body {
-            font-family: Arial;
-            margin: 30px;
-            background-color: #f9f9f9;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .upload-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        .file-input {
-            margin: 15px 0;
-        }
-        .file-input input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 2px dashed #4299e1;
-            border-radius: 6px;
-            background: #f8fafc;
-        }
-        .submit-btn {
-            background-color: #4299e1;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-        }
-        .submit-btn:hover {
-            background-color: #3182ce;
-        }
-        .back-btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #718096;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-        .content-section {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
             display: flex;
-            gap: 20px;
-            margin-top: 30px;
+            align-items: center;
+            justify-content: center;
         }
-        .notes-section {
-            flex: 1;
-            background: white;
-            padding: 20px;
+
+        .register-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 4rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            font-family: 'VT323', monospace;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 1rem;
+            color: var(--text-color);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        #mindmap-container {
-            flex: 2;
-            height: 600px;
-            background: white;
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(163, 107, 255, 0.25);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: white;
+            border: none;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .flash-message {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 4px;
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: translateY(-2px);
         }
-        .flash-error {
-            background-color: #fed7d7;
-            color: #c53030;
+
+        p {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+
+        p a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        p a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/" class="back-btn">← Back to Home</a>
-        
-        <h1>📄 Document Upload</h1>
-        
-        <div class="upload-section">
-            <h2>Upload Your Document</h2>
-            <form action="{{ url_for('upload_document') }}" method="post" enctype="multipart/form-data">
-                <div class="file-input">
-                    <input type="file" name="file" id="file" accept=".pdf,.docx" required>
-                </div>
-                <button type="submit" class="submit-btn">Generate Study Materials</button>
-            </form>
-        </div>
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        {% if notes %}
-        <div class="content-section">
-            <div class="notes-section">
-                <h2>📝 Notes</h2>
-                <div id="notes-content">{{ notes | safe }}</div>
-            </div>
-            
-            <div id="mindmap-container"></div>
-        </div>
-        {% endif %}
+    <div class="register-container">
+        <h2>Register</h2>
+        <form method="POST">
+            <input name="username" placeholder="Username" required>
+            <input name="password" type="password" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="/login">Login</a></p>
     </div>
-
-    <script>
-        // Initialize GoJS diagram
-        function initMindMap(data) {
-            const $ = go.GraphObject.make;
-            const myDiagram = $(go.Diagram, "mindmap-container", {
-                initialAutoScale: go.Diagram.Uniform,
-                layout: $(go.TreeLayout, {
-                    angle: 0,
-                    layerSpacing: 40
-                }),
-                "undoManager.isEnabled": true
-            });
-
-            myDiagram.nodeTemplate =
-                $(go.Node, "Auto",
-                    { movable: true },
-                    $(go.Shape, "RoundedRectangle", { 
-                        fill: "#4caf50", 
-                        strokeWidth: 0 
-                    }),
-                    $(go.TextBlock, {
-                        margin: 8,
-                        font: "bold 14px sans-serif",
-                        stroke: "white",
-                        wrap: go.TextBlock.WrapFit,
-                        textAlign: "center",
-                        width: 100
-                    }, new go.Binding("text", "text"))
-                );
-
-            myDiagram.linkTemplate =
-                $(go.Link,
-                    { routing: go.Link.Orthogonal },
-                    $(go.Shape, { 
-                        stroke: "#2c5282",
-                        strokeWidth: 2
-                    })
-                );
-
-            if (data && data.length > 0) {
-                const nodes = [];
-                const links = [];
-                data.forEach((node, index) => {
-                    nodes.push({
-                        key: index,
-                        text: node.content
-                    });
-                    if (node.parent !== 'null') {
-                        links.push({
-                            from: parseInt(node.parent),
-                            to: index
-                        });
-                    }
-                });
-                
-                myDiagram.model = new go.GraphLinksModel(nodes, links);
-            }
-        }
-
-        // Initialize MathJax and GoJS when document is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            {% if mindmap %}
-                initMindMap({{ mindmap | tojson | safe }});
-            {% endif %}
-
-            if (window.MathJax) {
-                MathJax.typesetPromise();
-            }
-        });
-    </script>
 </body>
 </html>

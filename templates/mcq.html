@@ -1,26 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Your Knowledge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=VT323&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial;
-            margin: 30px;
-            background-color: #f9f9f9;
+        :root {
+            --bg-color: #0f0f17;
+            --primary: #a36bff;
+            --primary-light: #b388ff;
+            --text-color: #f0f0f0;
+            --secondary: #6b44c0;
+            --accent: #ff44e3;
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-border: rgba(255, 255, 255, 0.2);
         }
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
             max-width: 800px;
-            margin: 0 auto;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .topic-header {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-family: 'VT323', monospace;
+        }
+
+        .topic-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .topic-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-color);
         }
 
         .question-block {
-            background: #f8f9fa;
+            background: rgba(255, 255, 255, 0.08);
             padding: 20px;
             margin: 15px 0;
             border-radius: 8px;
-            border-left: 4px solid #4299e1;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .option {
@@ -31,7 +76,7 @@
         }
 
         .option:hover {
-            background-color: #edf2f7;
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .option label {
@@ -42,50 +87,51 @@
         }
 
         .submit-btn {
-            background-color: #4299e1;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
             color: white;
             padding: 12px 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 600;
             margin: 20px 0;
             width: 100%;
+            transition: all 0.3s ease;
         }
 
         .submit-btn:hover {
-            background-color: #3182ce;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            transform: translateY(-2px);
         }
 
         .results-summary {
             text-align: center;
             padding: 20px;
             margin-top: 20px;
-            background: #f0fff4;
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 8px;
+            border: 1px solid var(--input-border);
         }
 
-        .correct { color: #38a169; font-weight: bold; }
-        .incorrect { color: #e53e3e; font-weight: bold; }
-        
-        .topic-header {
-            text-align: center;
-            color: #2d3748;
-            margin-bottom: 30px;
+        .correct {
+            color: var(--accent);
+            font-weight: bold;
         }
 
         .back-btn {
             display: inline-block;
             padding: 8px 16px;
-            background-color: #718096;
+            background-color: var(--secondary);
             color: white;
             text-decoration: none;
             border-radius: 4px;
             margin-bottom: 20px;
+            transition: background-color 0.3s ease;
         }
 
         .back-btn:hover {
-            background-color: #4a5568;
+            background-color: var(--primary);
         }
     </style>
 </head>
@@ -106,7 +152,7 @@
                         {% if question.options %}
                             {% for key, value in question.options.items() %}
                             <div class="option">
-                                <input type="checkbox" 
+                                <input type="radio" 
                                        name="q{{ loop.index }}" 
                                        value="{{ key }}" 
                                        id="q{{ loop.index }}_{{ key }}">

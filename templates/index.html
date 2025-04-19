@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Syllabyte-quickrev</title>
+    <title>Study Aid Generator</title>
      <!-- Add MathJax support -->
      <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
      <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -19,169 +19,226 @@
          };
      </script>
     <style>
-        /* Updated styles inspired by try.html */
-        :root {
-            --bg-color: #0f0f17;
-            --primary: #a36bff;
-            --primary-light: #b388ff;
-            --text-color: #f0f0f0;
-            --secondary: #6b44c0;
-            --accent: #ff44e3;
-            --neon-glow: 0 0 10px rgba(163, 107, 255, 0.7), 0 0 20px rgba(163, 107, 255, 0.5), 0 0 30px rgba(163, 107, 255, 0.3);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: var(--neon-glow);
-            margin-bottom: 1.5rem;
-        }
-
-        form {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 2rem;
-            width: auto;
-            max-width: 600px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        input[type="text"] {
-            width: 500px;
-            padding: 0.75rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-color);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(163, 107, 255, 0.25);
-        }
-
-        button {
-            background: linear-gradient(135deg, var(--primary-light), var(--primary));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            transform: translateY(-2px);
-            box-shadow: var(--neon-glow);
-        }
-
-        .output {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            color: var(--text-color);
-        }
-
-        .output h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: var(--neon-glow);
-            margin-bottom: 1rem;
-        }
-
-        .results-summary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            color: var(--text-color);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .correct {
-            color: #38a169;
-            font-weight: bold;
-        }
-
-        .incorrect {
-            color: #e53e3e;
-            font-weight: bold;
-        }
-
-        .history {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-            width: 100%;
-            max-width: 600px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .history h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: var(--neon-glow);
-            margin-bottom: 1rem;
-        }
-
-        .history ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .history li {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-            color: var(--text-color);
-        }
-           a {
-        display: inline-block;
-        text-decoration: none;
-        color: var(--text-color);
-        background: linear-gradient(135deg, var(--primary-light), var(--primary));
-        padding: 0.5rem 1rem;
+        body { font-family: Arial; margin: 30px; background-color: #f9f9f9; }
+        input, button { padding: 10px; margin-top: 10px; width: 100%; }
+        .output { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
+        h2 { color: #007bff; }
+        
+    /* Add these styles to your existing CSS */
+    .output {
+        background: white;
+        padding: 20px;
+        margin-top: 20px;
         border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 5px #ccc;
+    }
+    #notes-content {
+        line-height: 1.6;
+    }
+    #notes-content strong {
+        color: #2c5282;
+    }
+    #notes-content ul {
+        padding-left: 20px;
+    }
+    #notes-content li {
+        margin-bottom: 15px;
+    }
+    .formula-block {
+        background: #f8f9fa;
+        padding: 15px;
+        border-left: 4px solid #4299e1;
+        margin: 10px 0;
+        border-radius: 4px;
+    }
+    .formula-block strong {
+        color: #2c5282;
+        display: block;
+        margin-top: 10px;
+    }
+    
+    .formula-block p {
+        margin: 15px 0;
+    }
+    
+    .formula-block .mjx-chtml {
+        margin: 15px 0;
     }
 
-    a:hover {
-        background: linear-gradient(135deg, var(--primary), var(--accent));
+        .history { background: #eef2f3; padding: 10px; margin-top: 30px; border-radius: 6px; }
+
+    /* Add to your existing styles */
+    .output h3 {
+        color: #2c5282;
+        margin-top: 20px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+    }
+
+    .output h2 {
+        color: #1a365d;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 1.8em;
+    }
+
+    .formula-block {
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #4299e1;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .formula-block p {
+        margin: 10px 0;
+    }
+
+    .formula-block strong {
+        color: #2c5282;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .mjx-math {
+        margin: 10px 0;
+        display: block;
+    }
+
+    /* Add to your existing styles */
+    .formula-block strong, #notes-content strong {
+        color: #2c5282;
+        display: inline-block;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    .formula-block h3 {
+        color: #2c5282;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+
+    .formula-block p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    #formulas-content .mjx-math {
+        margin: 15px 0;
+        display: block;
+    }
+
+    /* Add to your existing styles */
+    #mindmapDiagram {
+        width: 100%;
+        height: 500px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .output:has(#mindmapDiagram) {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* Main topic heading */
+    .formula-block h2 {
+        color: #1a365d;
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #4299e1;
+    }
+
+    /* Formula spacing */
+    .formula-block .mjx-chtml {
+        margin: 15px 0;
+        display: block;
+    }
+
+    .test-btn, .submit-btn {
+        background-color: #4299e1;
         color: white;
-        transform: translateY(-2px);
-        box-shadow: var(--neon-glow);
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .test-btn:hover, .submit-btn:hover {
+        background-color: #3182ce;
+    }
+
+    .question-block {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border-left: 4px solid #4299e1;
+    }
+
+    .option {
+        margin: 10px 0;
+    }
+
+    .option label {
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .results-summary {
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        background: #f0fff4;
+        border-radius: 8px;
+    }
+
+    .correct {
+        color: #38a169;
+        font-weight: bold;
+    }
+
+    .incorrect {
+        color: #e53e3e;
+        font-weight: bold;
+    }
+
+    .upload-section {
+        margin: 30px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .file-input {
+        margin: 15px 0;
+    }
+
+    .file-input input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border: 2px dashed #4299e1;
+        border-radius: 6px;
+        background: #f8fafc;
+    }
+
+    .file-input label {
+        display: block;
+        margin-bottom: 5px;
+        color: #2d3748;
     }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -190,7 +247,7 @@
     <h1>Welcome, {{ session.username }}!</h1>
     <a href="/logout">Logout</a>
     
-    <h1>Syllabyte: Quick Revision</h1>
+    <h1>📘 AI Study Aid Generator</h1>
     <form method="POST">
         <input type="text" name="topic" placeholder="Enter a topic like 'Machine Learning'" required>
         <button type="submit">Generate</button>

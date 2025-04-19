@@ -1,0 +1,12 @@
+Flask
+langchain
+groq
+SQLAlchemy
+python-dotenv
+Werkzeug
+flask_sqlalchemy
+langchain_groq
+llama-index
+llama-index-llms-groq
+PyPDF2
+python-docx

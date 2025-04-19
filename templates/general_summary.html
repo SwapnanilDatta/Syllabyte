@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>General Summary</title>
+    <!-- Add MathJax support -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body { 
+            font-family: Arial; 
+            margin: 30px; 
+            background-color: #f9f9f9; 
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #718096;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .output { 
+            background: white; 
+            padding: 20px; 
+            margin-top: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 0 5px #ccc; 
+        }
+
+        .summary-section {
+            line-height: 1.6;
+        }
+
+        .summary-section strong {
+            color: #2c5282;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .summary-section h2 {
+            color: #1a365d;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .view-more-btn {
+            background-color: #4299e1;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .view-more-btn:hover {
+            background-color: #3182ce;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        /* Key points styling */
+        .key-points {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #4299e1;
+            border-radius: 4px;
+        }
+
+        .key-points h3 {
+            color: #2c5282;
+            margin-top: 0;
+        }
+
+        .key-points ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .key-points li {
+            margin: 10px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .key-points li:before {
+            content: "•";
+            color: #4299e1;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Back to Study Aid</a>
+        <h1>📘 AI Study Aid Generator</h1>
+        <form method="POST">
+            <input type="text" name="topic" placeholder="Enter a topic like 'Machine Learning'" required>
+            <button type="submit">Generate</button>
+        </form>
+    
+       
+        {% if topic %}
+        <div class="header">
+            <h1>📚 Study Summary</h1>
+            <h2>Topic: {{ topic }}</h2>
+        </div>
+
+        <div class="output">
+            <div class="summary-section" id="summary-content"></div>
+        </div>
+
+        <div class="output text-center">
+            <form action="{{ url_for('general_mindmap') }}" method="POST">
+                <input type="hidden" name="topic" value="{{ topic }}">
+                <button type="submit" class="view-more-btn">
+                    🌳 View Mind Map
+                </button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to wrap text in strong tags
+            function wrapInStrong(text) {
+                return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+
+            // Parse and format the summary content
+            const summaryContent = `{{ summary|safe }}`;
+            let formattedContent = marked.parse(summaryContent);
+            
+            // Add the formatted content
+            document.getElementById('summary-content').innerHTML = formattedContent;
+
+            // Process any remaining markdown-style bold text
+            const allParagraphs = document.querySelectorAll('#summary-content p');
+            allParagraphs.forEach(element => {
+                element.innerHTML = wrapInStrong(element.innerHTML);
+            });
+
+            // Trigger MathJax to process any math content
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+    </script>
+</body>
+</html>

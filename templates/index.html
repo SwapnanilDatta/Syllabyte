@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Study Aid Generator</title>
+     <!-- Add MathJax support -->
+     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+     <script src="https://unpkg.com/gojs/release/go.js"></script>
+     <script>
+         window.MathJax = {
+             tex: {
+                 inlineMath: [['$', '$'], ['\\(', '\\)']],
+                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                 processEscapes: true
+             },
+             options: {
+                 skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+             }
+         };
+     </script>
+    <style>
+        body { font-family: Arial; margin: 30px; background-color: #f9f9f9; }
+        input, button { padding: 10px; margin-top: 10px; width: 100%; }
+        .output { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
+        h2 { color: #007bff; }
+        
+    /* Add these styles to your existing CSS */
+    .output {
+        background: white;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 5px #ccc;
+    }
+    #notes-content {
+        line-height: 1.6;
+    }
+    #notes-content strong {
+        color: #2c5282;
+    }
+    #notes-content ul {
+        padding-left: 20px;
+    }
+    #notes-content li {
+        margin-bottom: 15px;
+    }
+    .formula-block {
+        background: #f8f9fa;
+        padding: 15px;
+        border-left: 4px solid #4299e1;
+        margin: 10px 0;
+        border-radius: 4px;
+    }
+    .formula-block strong {
+        color: #2c5282;
+        display: block;
+        margin-top: 10px;
+    }
+    
+    .formula-block p {
+        margin: 15px 0;
+    }
+    
+    .formula-block .mjx-chtml {
+        margin: 15px 0;
+    }
+
+        .history { background: #eef2f3; padding: 10px; margin-top: 30px; border-radius: 6px; }
+
+    /* Add to your existing styles */
+    .output h3 {
+        color: #2c5282;
+        margin-top: 20px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+    }
+
+    .output h2 {
+        color: #1a365d;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 1.8em;
+    }
+
+    .formula-block {
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #4299e1;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .formula-block p {
+        margin: 10px 0;
+    }
+
+    .formula-block strong {
+        color: #2c5282;
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .mjx-math {
+        margin: 10px 0;
+        display: block;
+    }
+
+    /* Add to your existing styles */
+    .formula-block strong, #notes-content strong {
+        color: #2c5282;
+        display: inline-block;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    .formula-block h3 {
+        color: #2c5282;
+        margin-top: 0;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+        font-size: 1.2em;
+        font-weight: 600;
+    }
+
+    .formula-block p {
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    #formulas-content .mjx-math {
+        margin: 15px 0;
+        display: block;
+    }
+
+    /* Add to your existing styles */
+    #mindmapDiagram {
+        width: 100%;
+        height: 500px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .output:has(#mindmapDiagram) {
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* Main topic heading */
+    .formula-block h2 {
+        color: #1a365d;
+        font-size: 1.5em;
+        text-align: center;
+        margin-bottom: 25px;
+        padding-bottom: 10px;
+        border-bottom: 3px solid #4299e1;
+    }
+
+    /* Formula spacing */
+    .formula-block .mjx-chtml {
+        margin: 15px 0;
+        display: block;
+    }
+
+    .test-btn, .submit-btn {
+        background-color: #4299e1;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .test-btn:hover, .submit-btn:hover {
+        background-color: #3182ce;
+    }
+
+    .question-block {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border-left: 4px solid #4299e1;
+    }
+
+    .option {
+        margin: 10px 0;
+    }
+
+    .option label {
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .results-summary {
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        background: #f0fff4;
+        border-radius: 8px;
+    }
+
+    .correct {
+        color: #38a169;
+        font-weight: bold;
+    }
+
+    .incorrect {
+        color: #e53e3e;
+        font-weight: bold;
+    }
+
+    .upload-section {
+        margin: 30px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .file-input {
+        margin: 15px 0;
+    }
+
+    .file-input input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        border: 2px dashed #4299e1;
+        border-radius: 6px;
+        background: #f8fafc;
+    }
+
+    .file-input label {
+        display: block;
+        margin-bottom: 5px;
+        color: #2d3748;
+    }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <h1>Welcome, {{ session.username }}!</h1>
+    <a href="/logout">Logout</a>
+    
+    <h1>📘 AI Study Aid Generator</h1>
+    <form method="POST">
+        <input type="text" name="topic" placeholder="Enter a topic like 'Machine Learning'" required>
+        <button type="submit">Generate</button>
+    </form>
+
+    <!-- <div class="upload-section">
+        <h2>📄 Or Upload a Document</h2>
+        <form action="{{ url_for('upload_document') }}" method="post" enctype="multipart/form-data">
+            <div class="file-input">
+                <input type="file" name="file" id="file" accept=".pdf,.docx" required>
+                <label for="file">Choose PDF or DOCX file</label>
+            </div>
+            <button type="submit">Generate Notes from Document</button>
+        </form>
+    </div> -->
+
+    {% if notes %}
+        <div class="output">
+            <h2>📝 Notes</h2>
+            <div id="notes-content"></div>
+        </div>
+    
+        <div class="output">
+            <h2>🔢 Formulas</h2>
+            {{ formulas }}
+        </div>
+        <div class="output text-center">
+            <form action="{{ url_for('generate_study_material_route') }}" method="POST">
+                    <input type="hidden" name="topic" value="{{ request.form.get('topic') }}">
+                    <!-- <input type="hidden" name="topic" value="{{ topic }}"> -->
+                <button type="submit" class="view-more-btn">
+                    🔍 View More Study Materials
+                </button>
+            </form>
+        </div>
+        
+        <div class="output">
+            <h2>📝 Test Your Knowledge</h2>
+            <form action="{{ url_for('mcq_page') }}" method="GET">
+                <input type="hidden" name="topic" value="{{ request.form.get('topic', '') }}">
+                <button type="submit" class="test-btn">Start Test</button>
+            </form>
+        </div>
+             
+    {% endif %}
+    
+
+    <div class="history">
+        <h2>📜 Your Past Searches</h2>
+        <ul>
+        {% for item in history %}
+            <li><strong>{{ item.topic }}</strong> - {{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</li>
+        {% else %}
+            <p>No search history yet.</p>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Function to wrap text in strong tags
+            function wrapInStrong(text) {
+                return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+
+            // Handle notes content
+            const notesContent = `{{ notes|safe }}`;
+            const formattedNotes = marked.parse(notesContent);
+            document.getElementById('notes-content').innerHTML = formattedNotes;
+
+            // Handle formulas content with proper heading parsing
+            const formulasContent = `{{ formulas|safe }}`;
+            const formattedFormulas = marked.parse(formulasContent);
+            const formulasDiv = document.createElement('div');
+            formulasDiv.id = 'formulas-content';
+            formulasDiv.innerHTML = formattedFormulas;
+
+            // Process formula sections
+            const formulaSections = formulasDiv.querySelectorAll('h3');
+            formulaSections.forEach(section => {
+                const formulaBlock = document.createElement('div');
+                formulaBlock.className = 'formula-block';
+                
+                let currentElement = section;
+                const blockContent = [];
+                
+                while(currentElement && !currentElement.nextElementSibling?.matches('h3')) {
+                    blockContent.push(currentElement.outerHTML);
+                    if(currentElement.nextElementSibling) {
+                        currentElement = currentElement.nextElementSibling;
+                    } else {
+                        break;
+                    }
+                }
+                
+                formulaBlock.innerHTML = blockContent.join('');
+                section.parentNode.replaceChild(formulaBlock, section);
+            });
+
+            // Update the formulas section with processed content
+            document.querySelector('.output:nth-child(2)').innerHTML = `
+                <h2>🔢 Formulas</h2>
+                ${formulasDiv.innerHTML}
+            `;
+
+            // Process any remaining markdown-style bold text
+            const allElements = document.querySelectorAll('#formulas-content p, #notes-content p');
+            allElements.forEach(element => {
+                element.innerHTML = wrapInStrong(element.innerHTML);
+            });
+
+            // Trigger MathJax to reprocess the page
+            if (window.MathJax) {
+                MathJax.typesetPromise();
+            }
+        });
+
+    </script>
+    <script>
+        // Parse mindmap string into hierarchical data
+        const mindmapText = `{{ mindmap|safe }}`;
+    
+        function parseMindmap(text) {
+            if (!text || text.trim() === '') return [];
+            
+            const lines = text.trim().split('\n');
+            if (lines.length === 0) return [];
+
+            // Create root node from first line
+            const rootText = lines[0].trim();
+            const nodes = [{
+                key: 1,
+                text: rootText,
+                parent: null
+            }];
+            
+            let currentId = 2;
+            const stack = [{ indent: -1, id: 1 }];
+
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                const indent = line.search(/\S|$/);
+                if (indent === -1) continue;
+
+                const text = line.trim();
+                if (!text) continue;
+
+                // Find parent by checking indentation
+                while (stack.length > 0 && indent <= stack[stack.length - 1].indent) {
+                    stack.pop();
+                }
+
+                const parentId = stack[stack.length - 1].id;
+                const nodeId = currentId++;
+
+                nodes.push({
+                    key: nodeId,
+                    text: text,
+                    parent: parentId
+                });
+
+                stack.push({ indent, id: nodeId });
+            }
+
+            return nodes;
+        }
+
+        function renderMindmap(nodes) {
+            if (!nodes || nodes.length === 0) return;
+
+            const $ = go.GraphObject.make;
+            const diagram = $(go.Diagram, "mindmapDiagram", {
+                initialContentAlignment: go.Spot.Center,
+                "undoManager.isEnabled": true,
+                layout: $(go.TreeLayout, {
+                    angle: 90,
+                    layerSpacing: 35,
+                    alignment: go.TreeLayout.AlignmentCenterChildren
+                }),
+                maxSelectionCount: 1
+            });
+
+            diagram.nodeTemplate =
+                $(go.Node, "Auto",
+                    { // Node settings
+                        selectionAdorned: false,
+                        textEdited: false
+                    },
+                    $(go.Shape, "RoundedRectangle", {
+                        fill: "#4299e1",
+                        stroke: "#2c5282",
+                        strokeWidth: 1
+                    }),
+                    $(go.TextBlock, {
+                        margin: 12,
+                        font: "bold 14px Arial",
+                        stroke: "white",
+                        wrap: go.TextBlock.WrapFit
+                    },
+                    new go.Binding("text", "text"))
+                );
+
+            diagram.linkTemplate =
+                $(go.Link, {
+                    routing: go.Link.Orthogonal,
+                    corner: 5,
+                    selectable: false
+                },
+                    $(go.Shape, {
+                        strokeWidth: 2,
+                        stroke: "#4299e1"
+                    }));
+
+            const model = new go.TreeModel(nodes);
+            diagram.model = model;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const parsedNodes = parseMindmap(mindmapText);
+            renderMindmap(parsedNodes);
+        });
+
+        document.getElementById('startTest').addEventListener('click', async function() {
+            const topic = document.querySelector('input[name="topic"]').value;
+            const testContainer = document.getElementById('testContainer');
+            const questionsDiv = document.getElementById('questions');
+            
+            try {
+                const response = await fetch('/generate_mcq', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `topic=${encodeURIComponent(topic)}`
+                });
+                
+                const mcqs = await response.json();
+                
+                if (mcqs.error) {
+                    alert(mcqs.error);
+                    return;
+                }
+
+                // Display questions
+                questionsDiv.innerHTML = mcqs.map((q, i) => `
+                    <div class="question-block">
+                        <p><strong>Q${i + 1}:</strong> ${q.question}</p>
+                        ${Object.entries(q.options).map(([key, value]) => `
+                            <div class="option">
+                                <input type="radio" name="q${i}" value="${key}" id="q${i}${key}">
+                                <label for="q${i}${key}">${key}) ${value}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('');
+
+                // Store correct answers
+                testContainer.dataset.answers = JSON.stringify(mcqs.map(q => q.correct));
+                
+                // Show test
+                testContainer.style.display = 'block';
+                document.getElementById('startTest').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to generate questions. Please try again.');
+            }
+        });
+
+        document.getElementById('submitTest').addEventListener('click', function() {
+            const testContainer = document.getElementById('testContainer');
+            const resultsDiv = document.getElementById('results');
+            const correctAnswers = JSON.parse(testContainer.dataset.answers);
+            
+            let score = 0;
+            const userAnswers = [];
+            
+            // Calculate score
+            for (let i = 0; i < 5; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value === correctAnswers[i]) {
+                    score++;
+                }
+                userAnswers.push(selected ? selected.value : null);
+            }
+            
+            // Display results
+            resultsDiv.innerHTML = `
+                <div class="results-summary">
+                    <h3>Test Results</h3>
+                    <p>Your score: <strong>${score}/5</strong> (${(score/5*100).toFixed(0)}%)</p>
+                    ${score === 5 ? 
+                        '<p class="correct">Perfect score! 🎉</p>' : 
+                        '<p>Keep practicing to improve! 💪</p>'
+                    }
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            testContainer.style.display = 'none';
+            document.getElementById('startTest').style.display = 'block';
+        });
+    </script>
+    
+</body>
+</html>

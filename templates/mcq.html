@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Your Knowledge</title>
+    <style>
+        body {
+            font-family: Arial;
+            margin: 30px;
+            background-color: #f9f9f9;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .question-block {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4299e1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .option:hover {
+            background-color: #edf2f7;
+        }
+
+        .option label {
+            margin-left: 10px;
+            cursor: pointer;
+            display: inline-block;
+            width: calc(100% - 30px);
+        }
+
+        .submit-btn {
+            background-color: #4299e1;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #3182ce;
+        }
+
+        .results-summary {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: #f0fff4;
+            border-radius: 8px;
+        }
+
+        .correct { color: #38a169; font-weight: bold; }
+        .incorrect { color: #e53e3e; font-weight: bold; }
+        
+        .topic-header {
+            text-align: center;
+            color: #2d3748;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #718096;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background-color: #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/index" class="back-btn">← Back to Study Aid</a>
+        <div class="topic-header">
+            <h1>📝 Test Your Knowledge</h1>
+            <h2>Topic: {{ topic }}</h2>
+        </div>
+
+        <form id="quizForm">
+            <div id="questions">
+                {% if questions %}
+                    {% for question in questions %}
+                    <div class="question-block">
+                        <p><strong>Q{{ loop.index }}:</strong> {{ question.question }}</p>
+                        {% if question.options %}
+                            {% for key, value in question.options.items() %}
+                            <div class="option">
+                                <input type="checkbox" 
+                                       name="q{{ loop.index }}" 
+                                       value="{{ key }}" 
+                                       id="q{{ loop.index }}_{{ key }}">
+                                <label for="q{{ loop.index }}_{{ key }}">
+                                    {{ key }}) {{ value }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No questions generated. Please try again.</p>
+                {% endif %}
+            </div>
+            <button type="submit" class="submit-btn">Submit Test</button>
+        </form>
+        <div id="results" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const correctAnswers = {{ correct_answers|tojson|safe }};
+            let score = 0;
+            
+            // Calculate score using the correct question names
+            for (let i = 1; i <= 5; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected && selected.value === correctAnswers[i-1]) {
+                    score++;
+                }
+            }
+            
+            // Display results
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="results-summary">
+                    <h3>Test Results</h3>
+                    <p>Your score: <strong>${score}/5</strong> (${(score/5*100).toFixed(0)}%)</p>
+                    ${score === 5 ? 
+                        '<p class="correct">Perfect score! 🎉</p>' : 
+                        '<p>Keep practicing to improve! 💪</p>'
+                    }
+                        
+                    <p>Correct Answers:</p>
+                    <ul>
+                        ${correctAnswers.map((answer, index) => `<li>Q${index + 1}: ${answer}</li>`).join('')}
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+            document.querySelector('.submit-btn').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

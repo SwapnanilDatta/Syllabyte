@@ -20,13 +20,29 @@ with app.app_context():
     db.create_all()
 
 @app.route("/")
+def landing():
+    """Landing page route - first page users see"""
+    if "user_id" in session:
+        return redirect("/home")
+    return render_template("landing.html")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login route - accessible from landing page"""
+    if "user_id" in session:
+        return redirect("/home")
+    # ...rest of your login logic...
+
+@app.route("/home")
 def home():
+    """Home page after login"""
     if "user_id" not in session:
         return redirect("/login")
     return render_template("home.html")
 
 @app.route("/try")
 def try_page():
+    """Try page requires authentication"""
     if "user_id" not in session:
         return redirect("/login")
     return render_template("try.html")
